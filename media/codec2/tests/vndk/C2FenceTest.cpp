@@ -125,7 +125,7 @@ void C2FenceTest::validateNullFence(const C2Fence &fence) {
 
 TEST_F(C2FenceTest, SyncFence_with_negative_fd) {
     // Create a SyncFence with a negative fd.
-    C2Fence fence = _C2FenceFactory::CreateSyncFence(-1); // , false /* validate */);
+    C2Fence fence = _C2FenceFactory::CreateSyncFence(-1, false /* validate */);
 
     validateNullFence(fence);
 }
@@ -136,7 +136,7 @@ TEST_F(C2FenceTest, SyncFence_with_valid_fd) {
 
     int fd = memfd_create("test", 0 /* flags */);
 
-    C2Fence fence = _C2FenceFactory::CreateSyncFence(fd); // , false /* validate */);
+    C2Fence fence = _C2FenceFactory::CreateSyncFence(fd, false /* validate */);
     validateSingleFdFence(fence, fd);
 }
 

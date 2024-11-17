@@ -67,8 +67,11 @@ struct _C2FenceFactory {
      * \param validate          If true, the fence fd will be validated to ensure
      *                          it is a valid pending sync fence fd.
      */
+    static C2Fence CreateSyncFence(int fenceFd, bool validate /*= true*/);
+
+    //Overloading CreateSyncFence for backward compatibility
+
     static C2Fence CreateSyncFence(int fenceFd);
-    static C2Fence CreateSyncFence(int fenceFd, bool validate /* = true*/);
 
     /*
      * Create C2Fence from list of sync fence fds, while also merging them to

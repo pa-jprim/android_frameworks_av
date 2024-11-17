@@ -504,23 +504,6 @@ std::vector<int> ExtractFdsFromCodec2SyncFence(const C2Fence& fence) {
     return retFds;
 }
 
-C2Fence _C2FenceFactory::CreateSyncFence(int fenceFd) {
-    std::shared_ptr<C2Fence::Impl> p;
-    if (fenceFd >= 0) {
-        p = std::make_shared<_C2FenceFactory::SyncFenceImpl>(fenceFd);
-        if (!p) {
-            ALOGE("Failed to allocate sync fence impl");
-            close(fenceFd);
-        } else if (!p->valid()) {
-            p.reset();
-        }
-    } else {
-        ALOGV("Create sync fence from invalid fd");
-        return C2Fence();
-    }
-    return C2Fence(p);
-}
-
 C2Fence _C2FenceFactory::CreateSyncFence(int fenceFd, bool validate) {
     std::shared_ptr<C2Fence::Impl> p;
     if (fenceFd >= 0) {
@@ -528,19 +511,18 @@ C2Fence _C2FenceFactory::CreateSyncFence(int fenceFd, bool validate) {
         if (!p) {
             ALOGE("Failed to allocate sync fence impl");
             close(fenceFd);
-        }
-        // TODO(b/357743480) prebuilts need to be recompiled to include this
-        // change.
-        /*
-         else if (validate && (!p->valid() || p->ready())) {
+        } else if (validate && (!p->valid() || p->ready())) {
             // don't create a fence object if the sync fd already signaled or is invalid
             p.reset();
         }
-        */
     } else {
         ALOGV("Won't create sync fence from invalid fd");
     }
     return C2Fence(p);
+}
+
+C2Fence _C2FenceFactory::CreateSyncFence(int fenceFd) {
+    return CreateSyncFence(fenceFd, true);
 }
 
 C2Fence _C2FenceFactory::CreateUnorderedMultiSyncFence(
